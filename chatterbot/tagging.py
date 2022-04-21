@@ -24,7 +24,7 @@ class PosLemmaTagger(object):
         self.punctuation_table = str.maketrans(dict.fromkeys(string.punctuation))
 
         #self.nlp = spacy.load(self.language.ISO_639_1.lower())
-        self.nlp = spacy.load('it_core_news_sm')
+        self.nlp = spacy.load('it_core_news_lg')
         
 
     def get_text_index_string(self, text):
