@@ -207,6 +207,122 @@ class ChatBot(object):
 
         return response
 
+    def get_response_multi(self, statement=None, **kwargs):
+        
+        Statement = self.storage.get_object('statement')
+
+        additional_response_selection_parameters = kwargs.pop('additional_response_selection_parameters', {})
+
+        persist_values_to_response = kwargs.pop('persist_values_to_response', {})
+
+        if isinstance(statement, str):
+            kwargs['text'] = statement
+
+        if isinstance(statement, dict):
+            kwargs.update(statement)
+
+        if statement is None and 'text' not in kwargs:
+            raise self.ChatBotException(
+                'Either a statement object or a "text" keyword '
+                'argument is required. Neither was provided.'
+            )
+
+        if hasattr(statement, 'serialize'):
+            kwargs.update(**statement.serialize())
+
+        tags = kwargs.pop('tags', [])
+
+        text = kwargs.pop('text')
+
+        input_statement = Statement(text=text, **kwargs)
+
+        input_statement.add_tags(*tags)
+
+        # Preprocess the input statement
+        for preprocessor in self.preprocessors:
+            input_statement = preprocessor(input_statement)
+
+        # Make sure the input statement has its search text saved
+
+        if not input_statement.search_text:
+            input_statement.search_text = self.storage.tagger.get_text_index_string(input_statement.text)
+
+        if not input_statement.search_in_response_to and input_statement.in_response_to:
+            input_statement.search_in_response_to = self.storage.tagger.get_text_index_string(input_statement.in_response_to)
+
+        responses = self.generate_response_multi(input_statement, additional_response_selection_parameters)
+
+        for response in responses:
+            # Update any response data that needs to be changed
+            if persist_values_to_response:
+                for response_key in persist_values_to_response:
+                    response_value = persist_values_to_response[response_key]
+                    if response_key == 'tags':
+                        input_statement.add_tags(*response_value)
+                        response.add_tags(*response_value)
+                    else:
+                        setattr(input_statement, response_key, response_value)
+                        setattr(response, response_key, response_value)
+
+            if not self.read_only:
+                self.learn_response(input_statement)
+
+                # Save the response generated for the input
+                self.storage.create(**response.serialize())
+
+        return responses
+
+    def generate_response_multi(self, input_statement, additional_response_selection_parameters=None):
+        """
+        Return a response based on a given input statement.
+
+        :param input_statement: The input statement to be processed.
+        """
+        Statement = self.storage.get_object('statement')
+
+        results = []
+        result = None
+        max_confidence = -1
+
+        for adapter in self.logic_adapters:
+            if adapter.can_process(input_statement):
+
+                output = adapter.process(input_statement, additional_response_selection_parameters)
+                results.append(output)
+
+                self.logger.info(
+                    '{} selected "{}" as a response with a confidence of {}'.format(
+                        adapter.class_name, output.text, output.confidence
+                    )
+                )
+
+                if output.confidence > max_confidence:
+                    result = output
+                    max_confidence = output.confidence
+            else:
+                self.logger.info(
+                    'Not processing the statement using {}'.format(adapter.class_name)
+                )
+
+        class ResultOption:
+            def __init__(self, statement, count=1):
+                self.statement = statement
+                self.count = count
+
+        responses = []
+
+        for result_option in results:
+            result = result_option.statement
+            response = Statement(
+                text=result.text,
+                in_response_to=input_statement.text,
+                conversation=input_statement.conversation,
+                persona='bot:' + self.name
+            )
+            response.confidence = result.confidence
+            responses.append(response)
+        return responses
+
     def learn_response(self, statement, previous_statement=None):
         """
         Learn that the statement provided is a valid response.
