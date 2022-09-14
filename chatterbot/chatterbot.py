@@ -311,16 +311,40 @@ class ChatBot(object):
 
         responses = []
 
-        for result_option in results:
-            result = result_option.statement
-            response = Statement(
-                text=result.text,
-                in_response_to=input_statement.text,
-                conversation=input_statement.conversation,
-                persona='bot:' + self.name
-            )
-            response.confidence = result.confidence
-            responses.append(response)
+        if len(results) >= 3:
+            result_options = {}
+            for result_option in results:
+                result_string = result_option.text + ':' + (result_option.in_response_to or '')
+
+                if result_string in result_options:
+                    result_options[result_string].count += 1
+                    if result_options[result_string].statement.confidence < result_option.confidence:
+                        result_options[result_string].statement = result_option
+                else:
+                    result_options[result_string] = ResultOption(
+                        result_option
+                    )
+
+            #most_common = list(result_options.values())[0]
+
+            #for result_option in result_options.values():
+            #    if result_option.count > most_common.count:
+            #        most_common = result_option
+
+            #if most_common.count > 1:
+            #    result = most_common.statement
+
+            for result_option in result_options.values():
+                result = result_option.statement
+                response = Statement(
+                    text=result.text,
+                    in_response_to=input_statement.text,
+                    conversation=input_statement.conversation,
+                    persona='bot:' + self.name
+                )
+                response.confidence = result.confidence
+                responses.append(response)
+            
         return responses
 
     def learn_response(self, statement, previous_statement=None):
