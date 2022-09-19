@@ -56,7 +56,7 @@ class ChatBot(object):
         # Allow the bot to save input it receives so that it can learn
         self.read_only = kwargs.get('read_only', False)
 
-    def get_response(self, statement=None, learn=False, **kwargs):
+    def get_response(self, statement=None, learn=True, **kwargs):
         """
         Return the bot's response based on the input.
 
@@ -126,7 +126,7 @@ class ChatBot(object):
                     setattr(input_statement, response_key, response_value)
                     setattr(response, response_key, response_value)
 
-        if not self.read_only:
+        if not self.read_only and learn:
             self.learn_response(input_statement)
 
             # Save the response generated for the input
