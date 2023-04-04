@@ -323,7 +323,7 @@ class CAR:
 
 
 class CAT:
-    ISO_639_1 = ''
+    ISO_639_1 = 'ca'
     ISO_639 = 'cat'
     ENGLISH_NAME = 'Catalan'
 
@@ -491,7 +491,7 @@ class DAK:
 
 
 class DAN:
-    ISO_639_1 = ''
+    ISO_639_1 = 'da'
     ISO_639 = 'dan'
     ENGLISH_NAME = 'Danish'
 
@@ -641,7 +641,7 @@ class FIL:
 
 
 class FIN:
-    ISO_639_1 = ''
+    ISO_639_1 = 'fi'
     ISO_639 = 'fin'
     ENGLISH_NAME = 'Finnish'
 
@@ -875,7 +875,7 @@ class HMO:
 
 
 class HRV:
-    ISO_639_1 = ''
+    ISO_639_1 = 'hr'
     ISO_639 = 'hrv'
     ENGLISH_NAME = 'Croatian'
 
@@ -971,7 +971,7 @@ class IPK:
 
 
 class ITA:
-    ISO_639_1 = ''
+    ISO_639_1 = 'it'
     ISO_639 = 'ita'
     ENGLISH_NAME = 'Italian'
 
@@ -1247,7 +1247,7 @@ class LIN:
 
 
 class LIT:
-    ISO_639_1 = ''
+    ISO_639_1 = 'lt'
     ISO_639 = 'lit'
     ENGLISH_NAME = 'Lithuanian'
 
@@ -1313,7 +1313,7 @@ class LUS:
 
 
 class MAC:
-    ISO_639_1 = ''
+    ISO_639_1 = 'mk'
     ISO_639 = 'mac'
     ENGLISH_NAME = 'Macedonian'
 
@@ -1559,7 +1559,7 @@ class NOG:
 
 
 class NOR:
-    ISO_639_1 = ''
+    ISO_639_1 = 'nb'
     ISO_639 = 'nor'
     ENGLISH_NAME = 'Norwegian'
 
@@ -1691,7 +1691,7 @@ class PLI:
 
 
 class POL:
-    ISO_639_1 = ''
+    ISO_639_1 = 'pl'
     ISO_639 = 'pol'
     ENGLISH_NAME = 'Polish'
 
@@ -1751,7 +1751,7 @@ class ROM:
 
 
 class RUM:
-    ISO_639_1 = ''
+    ISO_639_1 = 'ro'
     ISO_639 = 'rum'
     ENGLISH_NAME = 'Romanian'
 

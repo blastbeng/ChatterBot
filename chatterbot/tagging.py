@@ -19,12 +19,11 @@ class PosLemmaTagger(object):
     def __init__(self, language=None):
         import spacy
 
-        self.language = languages.ITA
+        self.language = language or languages.ENG
 
         self.punctuation_table = str.maketrans(dict.fromkeys(string.punctuation))
 
-        #self.nlp = spacy.load(self.language.ISO_639_1.lower())
-        self.nlp = spacy.load('it_core_news_sm')
+        self.nlp = spacy.load(self.language.ISO_639_1.lower() + "_core_news_sm")
         
 
     def get_text_index_string(self, text):
