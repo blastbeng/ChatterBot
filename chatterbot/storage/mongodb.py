@@ -138,7 +138,7 @@ class MongoDatabaseAdapter(StorageAdapter):
             for order in order_by:
                 mongo_ordering.append((order, pymongo.ASCENDING))
 
-        total_statements = self.statements.find(kwargs).count()
+        total_statements = len(list(self.statements.find(kwargs)))
 
         for start_index in range(0, total_statements, page_size):
             if mongo_ordering:
