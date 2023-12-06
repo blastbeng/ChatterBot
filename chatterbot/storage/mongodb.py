@@ -26,16 +26,8 @@ class MongoDatabaseAdapter(StorageAdapter):
             'database_uri', 'mongodb://localhost:27017/chatterbot-database'
         )
 
-        self.username=kwargs.get(
-            'username', ''
-        )
-
-        self.password=kwargs.get(
-            'password', ''
-        )
-
         # Use the default host and port
-        self.client = MongoClient(self.database_uri, username=self.username, password=self.password)
+        self.client = MongoClient(self.database_uri)
 
         # Increase the sort buffer to 42M if possible
         try:
